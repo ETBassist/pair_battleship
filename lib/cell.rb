@@ -14,4 +14,7 @@ class Cell
     @ship = ship
   end
 
+  def fire_upon
+    @ship.hit
+  end
 end
