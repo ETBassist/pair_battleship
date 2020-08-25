@@ -3,6 +3,7 @@ require './test/test_helper'
 class CellTest < Minitest::Test
   def setup
     @cell = Cell.new("B4")
+    @cruiser = Ship.new("Cruiser", 3)
   end
 
   def test_it_exists
@@ -16,5 +17,12 @@ class CellTest < Minitest::Test
 
   def test_empty_returns_true_if_no_ship
     assert @cell.empty?
+  end
+
+  def test_returns_ship_and_false_if_not_empty
+    assert @cell.empty?
+    @cell.place_ship(@cruiser)
+    assert_equal @cruiser, @cell.ship
+    assert_equal false, @cell.empty?
   end
 end
