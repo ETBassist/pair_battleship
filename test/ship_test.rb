@@ -14,4 +14,19 @@ class ShipTest < Minitest::Test
     assert_equal "Cruiser", @cruiser.name
     assert_equal 3, @cruiser.health
   end
+
+  def test_hit_and_sunk_method
+    assert_equal false, @cruiser.sunk?
+    assert_equal 3, @cruiser.health
+    @cruiser.hit
+    assert_equal 2, @cruiser.health
+    assert_equal false, @cruiser.sunk?
+    @cruiser.hit
+    assert_equal 1, @cruiser.health
+    assert_equal false, @cruiser.sunk?
+    @cruiser.hit
+    assert_equal 0, @cruiser.health
+    assert @cruiser.sunk?
+  end
+
 end
