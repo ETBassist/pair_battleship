@@ -43,17 +43,22 @@ class CellTest < Minitest::Test
   def test_should_render_depending_on_ship_status
     destroyer = Ship.new("destroyer", 2)
     cell2 = Cell.new("B4")
+    cell3 = Cell.new("A1")
     cell2.place_ship(destroyer)
+    cell3.place_ship(@cruiser)
 
-    assert_equal "S", @cell.render(true)
-    assert_equal ".", @cell.render
+    assert_equal "S", cell2.render(true)
+    assert_equal ".", @cell.render(true)
+    assert_equal ".", cell3.render
+    cell3.fire_upon
+    assert_equal "H", cell3.render
     @cell.fire_upon
-    assert_equal "M", @cell.render
+    assert_equal "M", @cell.render(true)
     @cell.place_ship(destroyer)
     @cell.fire_upon
-    assert_equal "H", @cell.render
+    assert_equal "H", @cell.render(true)
     cell2.fire_upon
     assert_equal true, destroyer.sunk?
-    assert_equal "X", @cell.render
+    assert_equal "X", @cell.render(true)
   end
 end
