@@ -14,7 +14,6 @@ class BoardTest < Minitest::Test
     @board.cells.each do |coordinate, cell|
       assert_instance_of Cell, cell
     end
-    require "pry"; binding.pry
   end
 
 end
