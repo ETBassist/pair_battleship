@@ -25,4 +25,9 @@ class CellTest < Minitest::Test
     assert_equal @cruiser, @cell.ship
     assert_equal false, @cell.empty?
   end
+
+  def test_should_lower_ship_health_by_1_when_fire_upon
+    @cell.fire_upon
+    assert_equal 2, @cruiser.health
+  end
 end
