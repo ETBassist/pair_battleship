@@ -16,4 +16,11 @@ class BoardTest < Minitest::Test
     end
   end
 
+  def test_should_return_boolean_if_coordinate_exists_or_not
+    assert_equal false, @board.valid_coordinate?("H1")
+    assert_equal false, @board.valid_coordinate?("D0")
+    assert_equal false, @board.valid_coordinate?("A61")
+    assert_equal true, @board.valid_coordinate?("A1")
+    assert_equal true, @board.valid_coordinate?("C4")
+  end
 end
