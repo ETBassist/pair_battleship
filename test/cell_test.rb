@@ -8,4 +8,9 @@ class CellTest < Minitest::Test
   def test_it_exists
     assert_instance_of Cell, @cell
   end
+
+  def test_can_get_attributes
+    assert_equal "B4", @cell.coordinate
+    assert_nil @cell.ship
+  end
 end
