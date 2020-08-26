@@ -31,4 +31,12 @@ class Board
     end
     new_coords
   end
+
+  def place(ship, coords)
+    if valid_placement?(ship, coords)
+      coords.each do |cell|
+        @cells[cell].place_ship(ship)
+      end
+    end
+  end
 end
