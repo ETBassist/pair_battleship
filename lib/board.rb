@@ -11,4 +11,7 @@ class Board
     end
   end
 
+  def valid_coordinate?(coordinate)
+    @cells[coordinate] == nil ? false : true
+  end
 end
