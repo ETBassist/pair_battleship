@@ -20,6 +20,7 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_coordinate?("H1")
     assert_equal false, @board.valid_coordinate?("D0")
     assert_equal false, @board.valid_coordinate?("A61")
+    assert_equal false, @board.valid_coordinate?("!5")
     assert_equal true, @board.valid_coordinate?("A1")
     assert_equal true, @board.valid_coordinate?("C4")
   end
