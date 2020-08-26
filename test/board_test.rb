@@ -3,6 +3,7 @@ require './test/test_helper'
 class BoardTest < Minitest::Test
   def setup
     @board = Board.new
+    @cruiser = Ship.new("Cruiser", 3)
   end
 
   def test_it_exists
@@ -23,5 +24,10 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.valid_coordinate?("!5")
     assert_equal true, @board.valid_coordinate?("A1")
     assert_equal true, @board.valid_coordinate?("C4")
+  end
+
+  def test_should_test_valid_placement_for_length_of_ship
+    assert_equal true, @board.valid_placement?(@cruiser, ["A1","B1","C1"])
+    assert_equal false, @board.valid_placement?(@cruiser, ["A1","B1","C1","D1"])
   end
 end
