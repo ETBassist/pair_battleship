@@ -17,6 +17,7 @@ class Board
 
   def valid_placement?(ship, coords)
     return false if ship.length != coords.length
+    return false if valid_overlapping?(coords) == false
     valid_order_and_diagonal?(coords[0], coords[-1]) == coords
   end
 
@@ -32,11 +33,19 @@ class Board
     new_coords
   end
 
+  def valid_overlapping?(coords)
+    coords.each do |coord|
+      return false if @cells[coord].empty? != true
+    end
+  end
+
   def place(ship, coords)
     if valid_placement?(ship, coords)
       coords.each do |cell|
         @cells[cell].place_ship(ship)
       end
+    else
+      false
     end
   end
 end

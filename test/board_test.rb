@@ -53,4 +53,10 @@ class BoardTest < Minitest::Test
     assert_equal @cruiser, @board.cells["A2"].ship
     assert_equal @cruiser, @board.cells["A3"].ship
   end
+
+  def test_should_return_boolean_if_ships_overlap
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    assert_equal false, @board.cells["A1"].empty?
+    assert_equal false, @board.place(@submarine, ["A1", "B1"])
+  end
 end
