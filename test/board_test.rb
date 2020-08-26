@@ -59,4 +59,22 @@ class BoardTest < Minitest::Test
     assert_equal false, @board.cells["A1"].empty?
     assert_equal false, @board.place(@submarine, ["A1", "B1"])
   end
+
+  def test_render_method
+    test_board = "  1 2 3 4 \nA . . . .\nB . . . .\nC . . . .\nD . . . .\n"
+    assert_equal test_board, @board.render
+    @board.place(@cruiser, ["A1", "A2", "A3"])
+    test_board_true = "  1 2 3 4 \nA S S S .\nB . . . .\nC . . . .\nD . . . .\n"
+    assert_equal test_board_true, @board.render(true)
+    @board.cells["B1"].fire_upon
+    test_board_hit = "  1 2 3 4 \nA S S S .\nB M . . .\nC . . . .\nD . . . .\n"
+    assert_equal test_board_hit, @board.render(true)
+    @board.cells["A1"].fire_upon
+    test_board_ship_hit = "  1 2 3 4 \nA H S S .\nB M . . .\nC . . . .\nD . . . .\n"
+    assert_equal test_board_ship_hit, @board.render(true)
+    @board.cells["A2"].fire_upon
+    @board.cells["A3"].fire_upon
+    test_board_ship_sunk = "  1 2 3 4 \nA X X X .\nB M . . .\nC . . . .\nD . . . .\n"
+    assert_equal test_board_ship_sunk, @board.render(true)
+  end
 end
