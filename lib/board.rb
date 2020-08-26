@@ -14,4 +14,8 @@ class Board
   def valid_coordinate?(coordinate)
     @cells[coordinate] == nil ? false : true
   end
+
+  def valid_placement?(ship, coordinates)
+    return coordinates.length == ship.length ? true : false
+  end
 end
