@@ -33,18 +33,16 @@ class BoardTest < Minitest::Test
   end
 
   def test_should_test_valid_placement_for_consecutive_coordinates
-    skip
     assert_equal true, @board.valid_placement?(@cruiser, ["A1","A2","A3"])
     assert_equal false, @board.valid_placement?(@cruiser, ["A1","B1","D1"])
+    assert_equal false, @board.valid_placement?(@cruiser, ["B1","A1","D1"])
   end
 
   def test_should_test_valid_placement_for_diagonal_coordinates
-    skip
     assert_equal false, @board.valid_placement?(@cruiser, ["A1","B2","C3"])
   end
 
   def test_should_test_valid_placement_to_return_true_if_coordinates_are_valid
-    skip
     assert_equal true, @board.valid_placement?(@cruiser, ["A1","A2","A3"])
     assert_equal true, @board.valid_placement?(@submarine, ["D1","D2"])
   end
