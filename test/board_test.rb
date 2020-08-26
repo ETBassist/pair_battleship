@@ -4,6 +4,7 @@ class BoardTest < Minitest::Test
   def setup
     @board = Board.new
     @cruiser = Ship.new("Cruiser", 3)
+    @submarine = Ship.new("submarine", 2)
   end
 
   def test_it_exists
@@ -38,5 +39,10 @@ class BoardTest < Minitest::Test
 
   def test_should_test_valid_placement_for_diagonal_coordinates
     assert_equal false, @board.valid_placement?(@cruiser, ["A1","B2","C3"])
+  end
+
+  def test_should_test_valid_placement_to_return_true_if_coordinates_are_valid
+    assert_equal true, @board.valid_placement?(@cruiser, ["A1","A2","A3"])
+    assert_equal true, @board.valid_placement?(@submarine, ["D1","D2"])
   end
 end
