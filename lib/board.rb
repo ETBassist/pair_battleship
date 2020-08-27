@@ -2,18 +2,19 @@ class Board
   attr_reader :cells
 
   def initialize
-    @cells = board
+    @cells = Hash.new
+    @letters = ("A".."D").to_a
+    @numbers = (1..4).to_a
+    create_board
   end
 
-  def board
-    cells = Hash.new
-    ("A".."D").each do |letter|
-      (1..4).each do |number|
+  def create_board
+    @letters.each do |letter|
+      @numbers.each do |number|
         cell = Cell.new("#{letter}#{number}")
-        cells.store(cell.coordinate, cell)
+        @cells.store(cell.coordinate, cell)
       end
     end
-    cells
   end
 
   def valid_coordinate?(coordinate)
@@ -52,5 +53,21 @@ class Board
     else
       false
     end
+  end
+
+  def render(default=false)
+    board = "  "
+    @numbers.each do |number|
+      board += "#{number} "
+    end
+    board += "\n"
+    @letters.each do |letter|
+      board += letter
+        @numbers.each do |number|
+          board += " #{@cells["#{letter}#{number}"].render(default)}"
+        end
+      board += "\n"
+    end
+    board
   end
 end
