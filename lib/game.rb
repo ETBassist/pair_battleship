@@ -3,11 +3,11 @@ require './lib/cell'
 require './lib/ship'
 
 class Game
-  attr_reader :board_1, :board_2
+  attr_reader :player_board, :ai_board
 
   def initialize
-    @board_1 = Board.new
-    @board_2 = Board.new
+    @player_board = Board.new
+    @ai_board = Board.new
   end
 
   def main_menu
