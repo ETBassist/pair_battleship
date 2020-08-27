@@ -2,17 +2,22 @@ class Board
   attr_reader :cells
 
   def initialize
-    @cells = Hash.new
+    @cells = board
+  end
+
+  def board
+    cells = Hash.new
     ("A".."D").each do |letter|
       (1..4).each do |number|
         cell = Cell.new("#{letter}#{number}")
-        @cells.store(cell.coordinate, cell)
+        cells.store(cell.coordinate, cell)
       end
     end
+    cells
   end
 
   def valid_coordinate?(coordinate)
-    @cells[coordinate] == nil ? false : true
+    !(@cells[coordinate]).nil?
   end
 
   def valid_placement?(ship, coords)
