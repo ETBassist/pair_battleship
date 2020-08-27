@@ -8,4 +8,8 @@ class GameTest < Minitest::Test
   def test_it_exists
     assert_instance_of Game, @game
   end
+
+  def test_has_board_as_attribute
+    assert_instance_of Board, @game.board
+  end
 end
