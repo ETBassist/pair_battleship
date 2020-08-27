@@ -10,6 +10,7 @@ class GameTest < Minitest::Test
   end
 
   def test_has_board_as_attribute
-    assert_instance_of Board, @game.board
+    assert_instance_of Board, @game.board_1
+    assert_instance_of Board, @game.board_2
   end
 end
