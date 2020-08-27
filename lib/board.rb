@@ -12,7 +12,7 @@ class Board
     @letters.each do |letter|
       @numbers.each do |number|
         cell = Cell.new("#{letter}#{number}")
-        @cells.store(cell.coordinate, cell)
+        @cells.store(cell.coordinate, cell) 
       end
     end
   end
