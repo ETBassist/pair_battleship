@@ -18,7 +18,7 @@ class Cell
   def fire_upon
     return false if @fired_upon == true
     @fired_upon = true
-    @ship.hit if empty? == false
+    @ship.hit if !empty?
   end
 
   def fired_upon?
@@ -26,10 +26,10 @@ class Cell
   end
 
   def render(default=false)
-    return "S" if default == true && empty? == false && fired_upon? == false
-    return "X" if empty? == false && @ship.sunk?
+    return "S" if default == true && !empty? && !fired_upon?
+    return "X" if !empty? && @ship.sunk?
     return "M" if fired_upon? && empty?
-    return "H" if fired_upon? && empty? == false
-    return "." if fired_upon? == false
+    return "H" if fired_upon? && !empty?
+    return "." if !fired_upon?
   end
 end
