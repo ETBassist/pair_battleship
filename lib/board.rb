@@ -3,8 +3,10 @@ class Board
 
   def initialize
     @cells = Hash.new
-    ("A".."D").each do |letter|
-      (1..4).each do |number|
+    @letters = ("A".."D").to_a
+    @numbers = (1..4).to_a
+    @letters.each do |letter|
+      @numbers.each do |number|
         cell = Cell.new("#{letter}#{number}")
         @cells.store(cell.coordinate, cell)
       end
@@ -50,6 +52,19 @@ class Board
   end
 
   def render(default=false)
-    "  1 2 3 4 \nA #{@cells["A1"].render(default)} #{@cells["A2"].render(default)} #{@cells["A3"].render(default)} #{@cells["A4"].render(default)}\nB #{@cells["B1"].render(default)} #{@cells["B2"].render(default)} #{@cells["B3"].render(default)} #{@cells["B4"].render(default)}\nC #{@cells["C1"].render(default)} #{@cells["C2"].render(default)} #{@cells["C3"].render(default)} #{@cells["C4"].render(default)}\nD #{@cells["D1"].render(default)} #{@cells["D2"].render(default)} #{@cells["D3"].render(default)} #{@cells["D4"].render(default)}\n"
+    board = "  "
+    @numbers.each do |number|
+      board += "#{number} "
+    end
+    board += "\n"
+    @letters.each do |letter|
+      board += letter
+        @numbers.each do |number|
+          board += " #{@cells["#{letter}#{number}"].render(default)}"
+        end
+      board += "\n"
+    end
+    board
   end
+
 end
