@@ -53,4 +53,21 @@ class Board
       false
     end
   end
+
+  def render(default=false)
+    board = "  "
+    @numbers.each do |number|
+      board += "#{number} "
+    end
+    board += "\n"
+    @letters.each do |letter|
+      board += letter
+        @numbers.each do |number|
+          board += " #{@cells["#{letter}#{number}"].render(default)}"
+        end
+      board += "\n"
+    end
+    board
+  end
+
 end
