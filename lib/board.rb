@@ -12,7 +12,7 @@ class Board
     @letters.each do |letter|
       @numbers.each do |number|
         cell = Cell.new("#{letter}#{number}")
-        @cells.store(cell.coordinate, cell) 
+        @cells.store(cell.coordinate, cell)
       end
     end
   end
@@ -22,6 +22,9 @@ class Board
   end
 
   def valid_placement?(ship, coords)
+    coords.each do |coord|
+      return false if !valid_coordinate?(coord)
+    end
     return false if ship.length != coords.length
     return false if valid_overlapping?(coords) == false
     valid_order_and_diagonal?(coords[0], coords[-1]) == coords
