@@ -9,13 +9,6 @@ class Game
     @player_board = Board.new
     @ai_board = Board.new
     @player_ships = []
-    create_player_ships
-    @ship_bucket = @player_ships
-  end
-
-  def create_player_ships
-    @player_ships << Ship.new("Cruiser", 3)
-    @player_ships << Ship.new("Submarine", 2)
   end
 
   def main_menu
@@ -39,18 +32,20 @@ class Game
   end
 
   def place_player_ships
-    @ship_bucket.each do |ship|
+    ship_bucket = []
+    ship_bucket << Ship.new("Cruiser", 3)
+    ship_bucket << Ship.new("Submarine", 2)
+    show_placement_prompt
+    until ship_bucket.empty?
       puts @player_board.render(true)
-      puts "Enter the squares for the #{ship.name} (#{ship.length} spaces):"
+      puts "Enter the squares for the #{ship_bucket[0].name} (#{ship_bucket[0].length} spaces):"
       print ">"
       ship_placement = gets.chomp.split(" ")
-      if @player_board.valid_placement?(ship, ship_placement)
-        @player_board.place(ship, ship_placement)
-        @ship_bucket.shift
-        place_player_ships if @ship_bucket.length > 0
+      if @player_board.valid_placement?(ship_bucket[0], ship_placement)
+        @player_board.place(ship_bucket[0], ship_placement)
+        @player_ships << ship_bucket.shift
       else
         puts "Invalid placement. Please try again."
-        place_player_ships
       end
     end
   end
