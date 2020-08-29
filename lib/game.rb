@@ -11,6 +11,8 @@ class Game
     @ai_ships = []
     @player_ships = []
     @ai_copy_cells = @ai_board.cells.keys
+    @player_shot_result = nil
+    @ai_shot_result = nil
   end
 
 
@@ -80,6 +82,7 @@ class Game
   def ai_fire_upon
     random_coords = @ai_copy_cells.sample
     @player_board.cells[random_coords].fire_upon
+    @ai_shot_result = @player_board.cells[random_coords]
     @ai_copy_cells.delete(random_coords)
   end
 
@@ -101,6 +104,7 @@ class Game
     target = gets.chomp.upcase
     if @ai_board.valid_coordinate?(target) && !@ai_board.cells[target].fired_upon?
       @ai_board.cells[target].fire_upon
+      @player_shot_result = @ai_board.cells[target]
     else
       puts "Invalid target, try again"
       player_fire_upon
@@ -114,4 +118,25 @@ class Game
       puts "I won!"
     end
   end
+
+  def player_turn_feedback
+    if @player_shot_result.render == "X"
+      puts "You sunk my #{@player_shot_result.ship.name}!"
+    elsif @player_shot_result.render == "H"
+      puts "Your shot on #{@player_shot_result.coordinate} hit!"
+    else
+      puts "Your shot on #{@player_shot_result.coordinate} was a miss."
+    end
+  end
+
+  def ai_turn_feedback
+    if @ai_shot_result.render == "X"
+      puts "Ha ha, take that! I sank your #{@ai_shot_result.ship.name}!"
+    elsif @ai_shot_result.render == "H"
+      puts "My shot on #{@ai_shot_result.coordinate} was a hit!"
+    else
+      puts "My shot on #{@ai_shot_result.coordinate} was a miss."
+    end 
+  end
+
 end
