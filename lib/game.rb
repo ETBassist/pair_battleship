@@ -50,7 +50,7 @@ class Game
       puts @player_board.render(true)
       puts "Enter the squares for the #{ship_bucket[0].name} (#{ship_bucket[0].length} spaces):"
       print ">"
-      ship_placement = gets.chomp.split(" ")
+      ship_placement = gets.chomp.split(" ").upcase
       if @player_board.valid_placement?(ship_bucket[0], ship_placement)
         @player_board.place(ship_bucket[0], ship_placement)
         @player_ships << ship_bucket.shift
