@@ -82,4 +82,17 @@ class Game
     @player_board.cells[random_coords].fire_upon
     @ai_copy_cells.delete(random_coords)
   end
+
+  def player_fire_upon
+    puts "Enter the coordinate for your shot:"
+    print ">"
+    target = gets.chomp
+    if @ai_board.valid_coordinate?(target) && !@ai_board.cells[target].fired_upon?
+      @ai_board.cells[target].fire_upon
+    else
+      puts "Invalid target, try again"
+      player_fire_upon
+    end
+  end
+
 end
