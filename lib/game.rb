@@ -10,6 +10,7 @@ class Game
     @ai_board = Board.new
     @ai_ships = []
     @player_ships = []
+    @ai_copy_cells = @ai_board.cells.keys
   end
 
 
@@ -67,5 +68,11 @@ class Game
         @ai_ships << ai_ship_bucket.shift
       end
     end
+  end
+
+  def ai_fire_upon
+    random_coords = @ai_copy_cells.sample
+    @player_board.cells[random_coords].fire_upon
+    @ai_copy_cells.delete(random_coords)
   end
 end
