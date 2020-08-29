@@ -83,6 +83,18 @@ class Game
     @ai_copy_cells.delete(random_coords)
   end
 
+  def player_won?
+    @ai_ships.all? do |ship|
+      ship.health == 0
+    end
+  end
+
+  def ai_won?
+    @player_ships.all? do |ship|
+      ship.health == 0
+    end
+  end
+
   def player_fire_upon
     puts "Enter the coordinate for your shot:"
     print ">"
@@ -94,5 +106,4 @@ class Game
       player_fire_upon
     end
   end
-
 end
