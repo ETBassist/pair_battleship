@@ -50,7 +50,7 @@ class Game
       puts @player_board.render(true)
       puts "Enter the squares for the #{ship_bucket[0].name} (#{ship_bucket[0].length} spaces):"
       print ">"
-      ship_placement = gets.chomp.split(" ").upcase
+      ship_placement = gets.chomp.upcase.split(" ")
       if @player_board.valid_placement?(ship_bucket[0], ship_placement)
         @player_board.place(ship_bucket[0], ship_placement)
         @player_ships << ship_bucket.shift
@@ -86,7 +86,7 @@ class Game
   def player_fire_upon
     puts "Enter the coordinate for your shot:"
     print ">"
-    target = gets.chomp
+    target = gets.chomp.upcase
     if @ai_board.valid_coordinate?(target) && !@ai_board.cells[target].fired_upon?
       @ai_board.cells[target].fire_upon
     else
