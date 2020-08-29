@@ -3,13 +3,15 @@ require './lib/cell'
 require './lib/ship'
 
 class Game
-  attr_reader :player_board, :ai_board, :player_ships
+  attr_reader :player_board, :ai_board, :player_ships, :ai_dup_cells
 
   def initialize
     @player_board = Board.new
     @ai_board = Board.new
+    @ai_ships = []
     @player_ships = []
   end
+
 
   def main_menu
     puts "Welcome to BATTLESHIP"
@@ -50,4 +52,20 @@ class Game
     end
   end
 
+  def place_ai_ships
+    ai_ship_bucket = []
+    possible_coordinates = @ai_board.cells.keys
+    ai_ship_bucket << Ship.new("Cruiser", 3)
+    ai_ship_bucket << Ship.new("Submarine", 2)
+    until ai_ship_bucket.empty?
+      random_coords = possible_coordinates.sample(ai_ship_bucket[0].length).sort
+      if @ai_board.valid_placement?(ai_ship_bucket[0], random_coords)
+        @ai_board.place(ai_ship_bucket[0], random_coords)
+        random_coords.each do |coord|
+          possible_coordinates.delete(coord)
+        end
+        @ai_ships << ai_ship_bucket.shift
+      end
+    end
+  end
 end

@@ -26,7 +26,7 @@ class Board
       return false if !valid_coordinate?(coord)
     end
     return false if ship.length != coords.length
-    return false if valid_overlapping?(coords) == false
+    return false if !valid_overlapping?(coords)
     valid_order_and_diagonal?(coords[0], coords[-1]) == coords
   end
 
