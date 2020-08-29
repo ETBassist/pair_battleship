@@ -106,4 +106,12 @@ class Game
       player_fire_upon
     end
   end
+
+  def winner
+    if player_won?
+      puts "You won!"
+    elsif ai_won?
+      puts "I won!"
+    end
+  end
 end
