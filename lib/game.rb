@@ -21,7 +21,7 @@ class Game
     puts "Enter p to play. Enter q to quit"
     input = gets.chomp
     if input.downcase == "p"
-      # go to method that starts game
+      game_loop
     elsif input.downcase == "q"
       abort "Okay, bye!"
     else
@@ -30,8 +30,27 @@ class Game
     end
   end
 
+  def game_loop
+    place_ai_ships
+    place_player_ships
+    until player_won? || ai_won?
+      display_board
+      player_fire_upon
+      player_turn_feedback
+      break if player_won?
+      sleep(1.5)
+      ai_fire_upon
+      ai_turn_feedback
+      sleep(1.5)
+      system('clear')
+    end
+    winner
+    sleep(1.5)
+    main_menu
+  end
+
   def show_placement_prompt
-    puts "I have laid outs my ships on the grid."
+    puts "I have laid out my ships on the grid."
     puts "You now need to lay out your two ships"
     puts "The Cruiser is three units long and the submarine is two units long"
   end
@@ -60,6 +79,7 @@ class Game
         puts "Invalid placement. Please try again."
       end
     end
+    system('clear')
   end
 
   def place_ai_ships
@@ -136,7 +156,7 @@ class Game
       puts "My shot on #{@ai_shot_result.coordinate} was a hit!"
     else
       puts "My shot on #{@ai_shot_result.coordinate} was a miss."
-    end 
+    end
   end
 
 end
