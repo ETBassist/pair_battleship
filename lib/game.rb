@@ -82,4 +82,16 @@ class Game
     @player_board.cells[random_coords].fire_upon
     @ai_copy_cells.delete(random_coords)
   end
+
+  def player_won?
+    @ai_ships.all? do |ship|
+      ship.health == 0
+    end
+  end
+
+  def ai_won?
+    @player_ships.all? do |ship|
+      ship.health == 0
+    end
+  end
 end
