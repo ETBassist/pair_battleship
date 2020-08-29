@@ -33,6 +33,13 @@ class Game
     puts "The Cruiser is three units long and the submarine is two units long"
   end
 
+  def display_board
+    puts "=============COMPUTER BOARD============="
+    puts @ai_board.render
+    puts "==============PLAYER BOARD=============="
+    puts @player_board.render(true)
+  end
+
   def place_player_ships
     ship_bucket = []
     ship_bucket << Ship.new("Cruiser", 3)
