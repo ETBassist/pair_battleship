@@ -26,10 +26,10 @@ class Cell
   end
 
   def render(default=false)
-    return "S" if default == true && !empty? && !fired_upon?
     return "X" if !empty? && @ship.sunk?
     return "M" if fired_upon? && empty?
     return "H" if fired_upon? && !empty?
+    return "S" if default == true && !empty?
     return "." if !fired_upon?
   end
 end

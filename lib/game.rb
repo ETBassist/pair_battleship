@@ -3,7 +3,7 @@ require './lib/cell'
 require './lib/ship'
 
 class Game
-  attr_reader :player_board, :ai_board, :player_ships, :ai_dup_cells
+  attr_reader :player_board, :ai_board, :player_ships 
 
   def initialize
     @player_board = Board.new
