@@ -32,19 +32,19 @@ class Board
 
   def valid_order_and_diagonal?(coord1, coord2)
     new_coords = []
-    if coord1[1] == coord2[1]
+    if coord1[1..-1] == coord2[1..-1]
       letters = (coord1[0]..coord2[0]).to_a
-      letters.each {|letter| new_coords << letter + coord1[1]}
+      letters.each {|letter| new_coords << letter + coord1[1..-1]}
     elsif coord1[0] == coord2[0]
-      numbers = (coord1[1]..coord2[1]).to_a
+      numbers = (coord1[1..-1]..coord2[1..-1]).to_a
       numbers.each {|num| new_coords << coord1[0] + num}
     end
     new_coords
   end
 
   def valid_overlapping?(coords)
-    coords.each do |coord|
-      return false if @cells[coord].empty? != true
+    coords.all? do |coord|
+      @cells[coord].empty?
     end
   end
 
@@ -62,12 +62,15 @@ class Board
     board = "  "
     @numbers.each do |number|
       board += "#{number} "
+      if number.digits.count < 2
+        board += " "
+      end
     end
     board += "\n"
     @letters.each do |letter|
       board += letter
         @numbers.each do |number|
-          board += " #{@cells["#{letter}#{number}"].render(default)}"
+          board += " #{@cells["#{letter}#{number}"].render(default)} "
         end
       board += "\n"
     end
