@@ -1,11 +1,24 @@
+require './lib/cell'
 class Board
-  attr_reader :cells
+  attr_reader :cells, :letters
 
-  def initialize
+  def initialize(board_size=4)
+    @board_size = board_size
     @cells = Hash.new
-    @letters = ("A".."D").to_a
-    @numbers = (1..4).to_a
+    @letters = create_letters
+    @numbers = (1..@board_size).to_a
     create_board
+  end
+
+  def create_letters
+    letters = []
+    letter = "A"
+    letters << letter
+    (@board_size - 1).times do
+      letter = letter.next
+      letters << letter
+    end
+    letters
   end
 
   def create_board
