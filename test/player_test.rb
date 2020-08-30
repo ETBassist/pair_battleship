@@ -9,4 +9,8 @@ class PlayerTest < Minitest::Test
     assert_instance_of Player, @player
   end
 
+  def test_it_has_empty_ship_array_attribute
+    assert_equal [], @player.ships
+  end
+
 end
