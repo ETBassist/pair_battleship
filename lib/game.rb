@@ -1,18 +1,13 @@
 require './lib/board'
 require './lib/cell'
 require './lib/ship'
+require './lib/player'
 
 class Game
-  attr_reader :player_board, :ai_board, :player_ships 
-
   def initialize
-    @player_board = Board.new
-    @ai_board = Board.new
-    @ai_ships = []
-    @player_ships = []
-    @ai_copy_cells = @ai_board.cells.keys
-    @player_shot_result = nil
-    @ai_shot_result = nil
+    @player = Player.new
+    @ai_player = Player.new
+    @ai_copy_cells = nil
   end
 
 
@@ -30,14 +25,35 @@ class Game
     end
   end
 
+  def create_board_prompt
+    puts "Before we start how about you choose the size of the battlefield"
+    puts "If you want a default board you can enter 4, so choose your size field: "
+  end
+
+  def create_boards
+    input = gets.chomp.to_i
+    if input >= 4 && input <= 26
+      @player.board = Board.new(input)
+      @ai_player.board = Board.new(input)
+      @ai_copy_cells = @ai_player.board.cells.keys
+    else
+      system('clear')
+      puts "Sorry board is to small and dosnt exist in my files please choose a number
+              from 4 through 26, Thank you."
+      create_boards
+    end
+  end
+
   def game_loop
+    create_board_prompt
+    create_boards
     place_ai_ships
     place_player_ships
-    until player_won? || ai_won?
+    until @player.has_lost? || @ai_player.has_lost?
       display_board
       player_fire_upon
       player_turn_feedback
-      break if player_won?
+      break if @ai_player.has_lost?
       sleep(1.5)
       ai_fire_upon
       ai_turn_feedback
@@ -46,6 +62,7 @@ class Game
     end
     winner
     sleep(1.5)
+    system('clear')
     main_menu
   end
 
@@ -57,9 +74,9 @@ class Game
 
   def display_board
     puts "=============COMPUTER BOARD============="
-    puts @ai_board.render
+    puts @ai_player.board.render
     puts "==============PLAYER BOARD=============="
-    puts @player_board.render(true)
+    puts @player.board.render(true)
   end
 
   def place_player_ships
@@ -68,13 +85,13 @@ class Game
     ship_bucket << Ship.new("Submarine", 2)
     show_placement_prompt
     until ship_bucket.empty?
-      puts @player_board.render(true)
+      puts @player.board.render(true)
       puts "Enter the squares for the #{ship_bucket[0].name} (#{ship_bucket[0].length} spaces):"
       print ">"
       ship_placement = gets.chomp.upcase.split(" ")
-      if @player_board.valid_placement?(ship_bucket[0], ship_placement)
-        @player_board.place(ship_bucket[0], ship_placement)
-        @player_ships << ship_bucket.shift
+      if @player.board.valid_placement?(ship_bucket[0], ship_placement)
+        @player.board.place(ship_bucket[0], ship_placement)
+        @player.add_ship(ship_bucket.shift)
       else
         puts "Invalid placement. Please try again."
       end
@@ -84,47 +101,36 @@ class Game
 
   def place_ai_ships
     ai_ship_bucket = []
-    possible_coordinates = @ai_board.cells.keys
+    possible_coordinates = @ai_player.board.cells.keys
     ai_ship_bucket << Ship.new("Cruiser", 3)
     ai_ship_bucket << Ship.new("Submarine", 2)
     until ai_ship_bucket.empty?
       random_coords = possible_coordinates.sample(ai_ship_bucket[0].length).sort
-      if @ai_board.valid_placement?(ai_ship_bucket[0], random_coords)
-        @ai_board.place(ai_ship_bucket[0], random_coords)
+      if @ai_player.board.valid_placement?(ai_ship_bucket[0], random_coords)
+        @ai_player.board.place(ai_ship_bucket[0], random_coords)
         random_coords.each do |coord|
           possible_coordinates.delete(coord)
         end
-        @ai_ships << ai_ship_bucket.shift
+        @ai_player.add_ship(ai_ship_bucket.shift)
       end
     end
   end
 
   def ai_fire_upon
     random_coords = @ai_copy_cells.sample
-    @player_board.cells[random_coords].fire_upon
-    @ai_shot_result = @player_board.cells[random_coords]
+    @player.board.cells[random_coords].fire_upon
+    @ai_player.last_shot = @player.board.cells[random_coords]
     @ai_copy_cells.delete(random_coords)
   end
 
-  def player_won?
-    @ai_ships.all? do |ship|
-      ship.health == 0
-    end
-  end
-
-  def ai_won?
-    @player_ships.all? do |ship|
-      ship.health == 0
-    end
-  end
 
   def player_fire_upon
     puts "Enter the coordinate for your shot:"
     print ">"
     target = gets.chomp.upcase
-    if @ai_board.valid_coordinate?(target) && !@ai_board.cells[target].fired_upon?
-      @ai_board.cells[target].fire_upon
-      @player_shot_result = @ai_board.cells[target]
+    if @ai_player.board.valid_coordinate?(target) && !@ai_player.board.cells[target].fired_upon?
+      @ai_player.board.cells[target].fire_upon
+      @player.last_shot = @ai_player.board.cells[target]
     else
       puts "Invalid target, try again"
       player_fire_upon
@@ -132,30 +138,30 @@ class Game
   end
 
   def winner
-    if player_won?
+    if @ai_player.has_lost?
       puts "You won!"
-    elsif ai_won?
+    elsif @player.has_lost?
       puts "I won!"
     end
   end
 
   def player_turn_feedback
-    if @player_shot_result.render == "X"
-      puts "You sunk my #{@player_shot_result.ship.name}!"
-    elsif @player_shot_result.render == "H"
-      puts "Your shot on #{@player_shot_result.coordinate} hit!"
+    if @player.last_shot.render == "X"
+      puts "You sunk my #{@player.last_shot.ship.name}!"
+    elsif @player.last_shot.render == "H"
+      puts "Your shot on #{@player.last_shot.coordinate} hit!"
     else
-      puts "Your shot on #{@player_shot_result.coordinate} was a miss."
+      puts "Your shot on #{@player.last_shot.coordinate} was a miss."
     end
   end
 
   def ai_turn_feedback
-    if @ai_shot_result.render == "X"
-      puts "Ha ha, take that! I sank your #{@ai_shot_result.ship.name}!"
-    elsif @ai_shot_result.render == "H"
-      puts "My shot on #{@ai_shot_result.coordinate} was a hit!"
+    if @ai_player.last_shot.render == "X"
+      puts "Ha ha, take that! I sank your #{@ai_player.last_shot.ship.name}!"
+    elsif @ai_player.last_shot.render == "H"
+      puts "My shot on #{@ai_player.last_shot.coordinate} was a hit!"
     else
-      puts "My shot on #{@ai_shot_result.coordinate} was a miss."
+      puts "My shot on #{@ai_player.last_shot.coordinate} was a miss."
     end
   end
 
