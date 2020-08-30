@@ -1,5 +1,6 @@
 class Player
-  attr_reader :ships, :board, :last_shot
+  attr_reader :ships
+  attr_accessor :board, :last_shot
 
   def initialize
     @board = nil
