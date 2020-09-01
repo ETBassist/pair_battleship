@@ -136,16 +136,47 @@ class Game
   end
 
   def place_ai_ships
-    possible_coordinates = @ai_player.board.cells.keys
+    letter_characters = @ai_player.board.letters
+    number_characters = @ai_player.board.numbers
     until @ai_ship_bucket.empty?
-      random_coords = possible_coordinates.sample(@ai_ship_bucket[0].length).sort
-      if @ai_player.board.valid_placement?(@ai_ship_bucket[0], random_coords)
-        @ai_player.board.place(@ai_ship_bucket[0], random_coords)
-        random_coords.each do |coord|
-          possible_coordinates.delete(coord)
-        end
-        @ai_player.add_ship(@ai_ship_bucket.shift)
+      switch = rand(0..1)
+      if switch == 1
+        switch_letter(letter_characters, number_characters)
+      elsif switch == 0
+        switch_number(letter_characters, number_characters)
       end
+    end
+  end
+
+  def switch_letter(letters, numbers)
+    characters = []
+    letters.each_cons(@ai_ship_bucket[0].length) do |group| 
+      characters << group
+    end
+    letter_array = characters.sample
+    number = numbers.sample 
+    coords = letter_array.map do |letter|
+      letter + number.to_s
+    end
+    if @ai_player.board.valid_placement?(@ai_ship_bucket[0], coords)
+      @ai_player.board.place(@ai_ship_bucket[0], coords)
+      @ai_player.add_ship(@ai_ship_bucket.shift)
+    end
+  end
+
+  def switch_number(letters, numbers)
+    characters = []
+    numbers.each_cons(@ai_ship_bucket[0].length) do |group| 
+      characters << group
+    end
+    number_array  = characters.sample
+    letter = letters.sample 
+    coords = number_array.map do |number|
+      letter + number.to_s
+    end
+    if @ai_player.board.valid_placement?(@ai_ship_bucket[0], coords)
+      @ai_player.board.place(@ai_ship_bucket[0], coords)
+      @ai_player.add_ship(@ai_ship_bucket.shift)
     end
   end
 
