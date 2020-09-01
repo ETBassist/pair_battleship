@@ -18,4 +18,10 @@ class AITest < Minitest::Test
     assert_equal [], @ai.ai_ship_bucket
   end
 
+  def test_can_add_ships_to_bucket
+    assert_equal [], @ai.ai_ship_bucket
+    @ai.ai_ship_bucket << @ship
+    assert_equal [@ship], @ai.ai_ship_bucket
+  end
+
 end
