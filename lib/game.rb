@@ -8,6 +8,7 @@ class Game
     @player = Player.new
     @ai_player = Player.new
     @ai_copy_cells = nil
+    @ai_ship_bucket = []
   end
 
 
@@ -16,7 +17,7 @@ class Game
     puts "Enter p to play. Enter q to quit"
     input = gets.chomp
     if input.downcase == "p"
-      game_loop
+      create_boards
     elsif input.downcase == "q"
       abort "Okay, bye!"
     else
@@ -31,6 +32,7 @@ class Game
   end
 
   def create_boards
+    create_board_prompt
     input = gets.chomp.to_i
     if input >= 4 && input <= 26
       @player.board = Board.new(input)
@@ -38,17 +40,15 @@ class Game
       @ai_copy_cells = @ai_player.board.cells.keys
     else
       system('clear')
-      puts "Sorry board is to small and dosnt exist in my files please choose a number
+      puts "Sorry board is too small and doesn't exist in my files please choose a number
               from 4 through 26, Thank you."
       create_boards
     end
+    create_player_ships
   end
 
   def game_loop
-    create_board_prompt
-    create_boards
     place_ai_ships
-    place_player_ships
     until @player.has_lost? || @ai_player.has_lost?
       display_board
       player_fire_upon
@@ -67,9 +67,8 @@ class Game
   end
 
   def show_placement_prompt
-    puts "I have laid out my ships on the grid."
-    puts "You now need to lay out your two ships"
-    puts "The Cruiser is three units long and the submarine is two units long"
+    puts "Place your ship on the board"
+    puts "Don't make it too easy!"
   end
 
   def display_board
@@ -79,10 +78,10 @@ class Game
     puts @player.board.render(true)
   end
 
-  def place_player_ships
+  def place_player_ships(ship)
     ship_bucket = []
-    ship_bucket << Ship.new("Cruiser", 3)
-    ship_bucket << Ship.new("Submarine", 2)
+    @ai_ship_bucket << ship.dup
+    ship_bucket << ship
     show_placement_prompt
     until ship_bucket.empty?
       puts @player.board.render(true)
@@ -97,21 +96,56 @@ class Game
       end
     end
     system('clear')
+    create_player_ships
+  end
+
+  def create_player_ships
+    puts @player.board.render(true)
+    ships = nil
+    game_starter
+    loop do
+      puts "Enter the name of the ship you wish to create:"
+      print ">"
+      ship_name = gets.chomp
+      puts "Enter the length of the ship you wish to create:"
+      print ">"
+      ship_length = gets.chomp.to_i
+      if ship_length <= @player.board.board_size && !ship_length.zero?
+        ship = Ship.new(ship_name, ship_length)
+        puts "Ship created"
+        place_player_ships(ship)
+      elsif ship_length > @player.board.board_size
+        puts "Error: Ship is too large to fit on board"
+      elsif ship_length.zero?
+        puts "Please enter a length greater than zero in numeric form"
+      end
+    end
+  end
+
+  def game_starter
+    puts "If you would like to create ships, press s for (s)hips."
+    puts "If you would like to stop creating ships, enter c to (c)ontinue"
+    input = gets.chomp.downcase
+    if input == "c" && @player.ships.length > 0
+      game_loop
+    elsif input == "s"
+      return
+    else
+      puts "Invalid input."
+      game_starter
+    end
   end
 
   def place_ai_ships
-    ai_ship_bucket = []
     possible_coordinates = @ai_player.board.cells.keys
-    ai_ship_bucket << Ship.new("Cruiser", 3)
-    ai_ship_bucket << Ship.new("Submarine", 2)
-    until ai_ship_bucket.empty?
-      random_coords = possible_coordinates.sample(ai_ship_bucket[0].length).sort
-      if @ai_player.board.valid_placement?(ai_ship_bucket[0], random_coords)
-        @ai_player.board.place(ai_ship_bucket[0], random_coords)
+    until @ai_ship_bucket.empty?
+      random_coords = possible_coordinates.sample(@ai_ship_bucket[0].length).sort
+      if @ai_player.board.valid_placement?(@ai_ship_bucket[0], random_coords)
+        @ai_player.board.place(@ai_ship_bucket[0], random_coords)
         random_coords.each do |coord|
           possible_coordinates.delete(coord)
         end
-        @ai_player.add_ship(ai_ship_bucket.shift)
+        @ai_player.add_ship(@ai_ship_bucket.shift)
       end
     end
   end
