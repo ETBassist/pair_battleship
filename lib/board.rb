@@ -1,6 +1,6 @@
 require './lib/cell'
 class Board
-  attr_reader :cells, :letters
+  attr_reader :cells, :letters, :board_size
 
   def initialize(board_size=4)
     @board_size = board_size
