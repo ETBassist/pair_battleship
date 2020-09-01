@@ -143,7 +143,7 @@ class Game
       if switch == 1
         switch_letter(letter_characters, number_characters)
       elsif switch == 0
-        switch_number(letter_characters, numbers_characters)
+        switch_number(letter_characters, number_characters)
       end
     end
   end
