@@ -32,11 +32,19 @@ class AITest < Minitest::Test
     assert_equal false, @ai_player.board.cells["A1"].empty?
     assert_equal false, @ai_player.board.cells["B1"].empty?
     assert_equal false, @ai_player.board.cells["C1"].empty?
+    assert @ai_player.board.cells["A4"].empty?
     ship2 = Ship.new("Destroyer", 2)
     @ai.ai_ship_bucket << ship2
     @ai.generate_coords([1, 2], ["D"], @ai_player)
     assert_equal false, @ai_player.board.cells["D1"].empty?
     assert_equal false, @ai_player.board.cells["D2"].empty?
+  end
+
+  def test_ai_can_fire_upon_board
+    board2 = Board.new
+    @ai.ai_fire_upon(["A1"], board2, @ai_player)
+    assert_equal "A1", @ai_player.last_shot.coordinate
+    assert board2.cells["A1"].fired_upon?
   end
 
 end

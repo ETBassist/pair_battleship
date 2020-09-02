@@ -38,10 +38,10 @@ class AI
     end
   end
 
-  def ai_fire_upon(possible_targets, target_board)
+  def ai_fire_upon(possible_targets, target_board, ai_player)
     random_coords = possible_targets.sample
-    @player.board.cells[random_coords].fire_upon
-    @ai_player.last_shot = @player.board.cells[random_coords]
+    target_board.cells[random_coords].fire_upon
+    ai_player.last_shot = target_board.cells[random_coords]
     possible_targets.delete(random_coords)
   end
 
