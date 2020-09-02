@@ -1,6 +1,5 @@
 require './test/test_helper'
 require 'mocha/minitest'
-require 'stringio'
 
 class GameTest < Minitest::Test
   def setup
@@ -22,14 +21,6 @@ class GameTest < Minitest::Test
   def test_should_return_prompts_for_show_placement
     assert_output(/Place your ship on the board/) { @game.show_placement_prompt}
     assert_output(/Don't make it too easy!/) { @game.show_placement_prompt}
-  end
-
-  def test_should_return_prompt_depending_who_lost
-    @game.player.add_ship(@ship)
-    assert_output(/You won!/) { @game.winner}
-    @game.player.ships.shift
-    @game.ai_player.add_ship(@ship)
-    assert_output(/I won!/) { @game.winner}
   end
 
   def test_should_return_output_depending_input_game_starter

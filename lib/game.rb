@@ -2,14 +2,14 @@ require './lib/board'
 require './lib/cell'
 require './lib/ship'
 require './lib/player'
+require './lib/ai'
 
 class Game
-  attr_reader :player, :ai_player
   def initialize
     @player = Player.new
     @ai_player = Player.new
+    @ai = AI.new
     @ai_copy_cells = nil
-    @ai_ship_bucket = []
   end
 
   def main_menu
@@ -48,14 +48,14 @@ class Game
   end
 
   def game_loop
-    place_ai_ships
+    @ai.place_ai_ships(@ai_player)
     until @player.has_lost? || @ai_player.has_lost?
       display_board
       player_fire_upon
       player_turn_feedback
       break if @ai_player.has_lost?
       sleep(1.5)
-      ai_fire_upon
+      @ai.ai_fire_upon(@ai_copy_cells, @player.board, @ai_player)
       ai_turn_feedback
       sleep(1.5)
       system('clear')
@@ -80,7 +80,7 @@ class Game
 
   def place_player_ships(ship)
     ship_bucket = []
-    @ai_ship_bucket << ship.dup
+    @ai.ai_ship_bucket << ship.dup
     ship_bucket << ship
     show_placement_prompt
     until ship_bucket.empty?
@@ -134,59 +134,6 @@ class Game
       game_starter
     end
   end
-
-  def place_ai_ships
-    letter_characters = @ai_player.board.letters
-    number_characters = @ai_player.board.numbers
-    until @ai_ship_bucket.empty?
-      switch = rand(0..1)
-      if switch == 1
-        switch_letter(letter_characters, number_characters)
-      elsif switch == 0
-        switch_number(letter_characters, number_characters)
-      end
-    end
-  end
-
-  def switch_letter(letters, numbers)
-    characters = []
-    letters.each_cons(@ai_ship_bucket[0].length) do |group|
-      characters << group
-    end
-    letter_array = characters.sample
-    number = numbers.sample
-    coords = letter_array.map do |letter|
-      letter + number.to_s
-    end
-    if @ai_player.board.valid_placement?(@ai_ship_bucket[0], coords)
-      @ai_player.board.place(@ai_ship_bucket[0], coords)
-      @ai_player.add_ship(@ai_ship_bucket.shift)
-    end
-  end
-
-  def switch_number(letters, numbers)
-    characters = []
-    numbers.each_cons(@ai_ship_bucket[0].length) do |group|
-      characters << group
-    end
-    number_array  = characters.sample
-    letter = letters.sample
-    coords = number_array.map do |number|
-      letter + number.to_s
-    end
-    if @ai_player.board.valid_placement?(@ai_ship_bucket[0], coords)
-      @ai_player.board.place(@ai_ship_bucket[0], coords)
-      @ai_player.add_ship(@ai_ship_bucket.shift)
-    end
-  end
-
-  def ai_fire_upon
-    random_coords = @ai_copy_cells.sample
-    @player.board.cells[random_coords].fire_upon
-    @ai_player.last_shot = @player.board.cells[random_coords]
-    @ai_copy_cells.delete(random_coords)
-  end
-
 
   def player_fire_upon
     puts "Enter the coordinate for your shot:"
