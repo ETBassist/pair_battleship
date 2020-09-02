@@ -3,6 +3,7 @@ require './lib/cell'
 require './lib/ship'
 require './lib/player'
 require './lib/ai'
+require './lib/prompt'
 
 class Game
   def initialize
@@ -10,29 +11,24 @@ class Game
     @ai_player = Player.new
     @ai = AI.new
     @ai_copy_cells = nil
+    @prompts = Prompt.new
   end
 
   def main_menu
-    puts "Welcome to BATTLESHIP"
-    puts "Enter p to play. Enter q to quit"
+    @prompts.main_menu
     input = gets.chomp
     if input.downcase == "p"
       create_boards
     elsif input.downcase == "q"
-      abort "Okay, bye!"
+      abort "Arrr, chicken I sea!"
     else
-      puts "Please enter p or q"
+      puts "Arr, what be ye saying?"
       main_menu
     end
   end
 
-  def create_board_prompt
-    puts "Before we start how about you choose the size of the battlefield"
-    puts "If you want a default board you can enter 4, so choose your size field: "
-  end
-
   def create_boards
-    create_board_prompt
+    @prompts.create_board
     input = gets.chomp.to_i
     if input >= 4 && input <= 26
       @player.board = Board.new(input)
@@ -40,8 +36,7 @@ class Game
       @ai_copy_cells = @ai_player.board.cells.keys
     else
       system('clear')
-      puts "Sorry board is too small and doesn't exist in my files please choose a number
-              from 4 through 26, Thank you."
+      @prompts.create_board_error
       create_boards
     end
     create_player_ships
@@ -66,10 +61,6 @@ class Game
     main_menu
   end
 
-  def show_placement_prompt
-    puts "Place your ship on the board"
-    puts "Don't make it too easy!"
-  end
 
   def display_board
     puts "=============COMPUTER BOARD============="
@@ -82,17 +73,17 @@ class Game
     ship_bucket = []
     @ai.ai_ship_bucket << ship.dup
     ship_bucket << ship
-    show_placement_prompt
+    @prompts.show_placement
     until ship_bucket.empty?
       puts @player.board.render(true)
-      puts "Enter the squares for the #{ship_bucket[0].name} (#{ship_bucket[0].length} spaces):"
+      puts "Captain, position yer #{ship_bucket[0].name} (#{ship_bucket[0].length} spaces):"
       print ">"
       ship_placement = gets.chomp.upcase.split(" ")
       if @player.board.valid_placement?(ship_bucket[0], ship_placement)
         @player.board.place(ship_bucket[0], ship_placement)
         @player.add_ship(ship_bucket.shift)
       else
-        puts "Invalid placement. Please try again."
+        puts "Arrr, that's a lousy place for ye vessel"
       end
     end
     system('clear')
@@ -103,66 +94,64 @@ class Game
     puts @player.board.render(true)
     game_starter
     loop do
-      puts "Enter the name of the ship you wish to create:"
-      print ">"
+      @prompts.ship_name
       ship_name = gets.chomp
-      puts "Enter the length of the ship you wish to create:"
-      print ">"
+      @prompts.ship_length
       ship_length = gets.chomp.to_i
       if ship_length <= @player.board.board_size && !ship_length.zero?
         ship = Ship.new(ship_name, ship_length)
-        puts "Ship created"
+        puts "Vessel created, Captain!"
         place_player_ships(ship)
       elsif ship_length > @player.board.board_size
-        puts "Error: Ship is too large to fit on board"
+        puts "Ye vessel be too large, Captain!"
       elsif ship_length.zero?
-        puts "Please enter a length greater than zero in numeric form"
+        puts "Ye vessel be too small, Captain!"
       end
     end
   end
 
   def game_starter
-    puts "If you would like to create ships, press s for (s)hips."
-    puts "If you would like to stop creating ships, enter c to (c)ontinue"
+    @prompts.ship_creation
     input = gets.chomp.downcase
     if input == "c" && @player.ships.length > 0
+      @prompts.battle_stations
+      sleep(1.5)
       game_loop
     elsif input == "s"
       puts "Let's create a ship Captain!"
     else
-      puts "Invalid input."
+      puts "Captain, ye committed to the battle! Choose again!"
       game_starter
     end
   end
 
   def player_fire_upon
-    puts "Enter the coordinate for your shot:"
-    print ">"
+    @prompts.shot_coordinate 
     target = gets.chomp.upcase
     if @ai_player.board.valid_coordinate?(target) && !@ai_player.board.cells[target].fired_upon?
       @ai_player.board.cells[target].fire_upon
       @player.last_shot = @ai_player.board.cells[target]
     else
-      puts "Invalid target, try again"
+      puts "That be the wrong place to shoot, Captain!"
       player_fire_upon
     end
   end
 
   def winner
     if @ai_player.has_lost?
-      puts "You won!"
+      puts "Ye defeated me! See ye in Davey Jones Locker!"
     elsif @player.has_lost?
-      puts "I won!"
+      puts "Ye were too weak to be a challenge! Yer ships be my plunder!"
     end
   end
 
   def player_turn_feedback
     if @player.last_shot.render == "X"
-      puts "You sunk my #{@player.last_shot.ship.name}!"
+      puts "Me #{@player.last_shot.ship.name} was sunk!"
     elsif @player.last_shot.render == "H"
-      puts "Your shot on #{@player.last_shot.coordinate} hit!"
+      puts "Captain, yer shot on #{@player.last_shot.coordinate} hit!"
     else
-      puts "Your shot on #{@player.last_shot.coordinate} was a miss."
+      puts "Captain, yer shot on #{@player.last_shot.coordinate} was a miss."
     end
   end
 
@@ -170,9 +159,9 @@ class Game
     if @ai_player.last_shot.render == "X"
       puts "Ha ha, take that! I sank your #{@ai_player.last_shot.ship.name}!"
     elsif @ai_player.last_shot.render == "H"
-      puts "My shot on #{@ai_player.last_shot.coordinate} was a hit!"
+      puts "Me shot on #{@ai_player.last_shot.coordinate} was a hit!"
     else
-      puts "My shot on #{@ai_player.last_shot.coordinate} was a miss."
+      puts "Avast, my shot on #{@ai_player.last_shot.coordinate} was a miss."
     end
   end
 end
