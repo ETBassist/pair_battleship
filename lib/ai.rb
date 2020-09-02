@@ -27,9 +27,9 @@ class AI
     single_character = array2.sample 
     coords = character_group.map do |character|
       if single_character.to_i.zero?
-        single_character + character.to_s
+        single_character.to_s + character.to_s
       else
-        character.to_s + single_character
+        character.to_s + single_character.to_s
       end
     end
     if player.board.valid_placement?(@ai_ship_bucket[0], coords)

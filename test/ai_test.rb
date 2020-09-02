@@ -1,4 +1,5 @@
 require './test/test_helper'
+require 'mocha/minitest'
 
 class AITest < Minitest::Test
   def setup
@@ -22,6 +23,20 @@ class AITest < Minitest::Test
     assert_equal [], @ai.ai_ship_bucket
     @ai.ai_ship_bucket << @ship
     assert_equal [@ship], @ai.ai_ship_bucket
+  end
+
+  def test_can_generate_coordinates_for_ship_placement
+    @ai.ai_ship_bucket << @ship
+    @ai.generate_coords(["A", "B", "C"], [1], @ai_player)
+    assert_equal false, @ai_player.has_lost?
+    assert_equal false, @ai_player.board.cells["A1"].empty?
+    assert_equal false, @ai_player.board.cells["B1"].empty?
+    assert_equal false, @ai_player.board.cells["C1"].empty?
+    ship2 = Ship.new("Destroyer", 2)
+    @ai.ai_ship_bucket << ship2
+    @ai.generate_coords([1, 2], ["D"], @ai_player)
+    assert_equal false, @ai_player.board.cells["D1"].empty?
+    assert_equal false, @ai_player.board.cells["D2"].empty?
   end
 
 end
