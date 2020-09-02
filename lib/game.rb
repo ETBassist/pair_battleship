@@ -4,6 +4,7 @@ require './lib/ship'
 require './lib/player'
 
 class Game
+  attr_reader :player, :ai_player
   def initialize
     @player = Player.new
     @ai_player = Player.new
@@ -100,7 +101,6 @@ class Game
 
   def create_player_ships
     puts @player.board.render(true)
-    ships = nil
     game_starter
     loop do
       puts "Enter the name of the ship you wish to create:"
@@ -128,7 +128,7 @@ class Game
     if input == "c" && @player.ships.length > 0
       game_loop
     elsif input == "s"
-      return
+      puts "Let's create a ship Captain!"
     else
       puts "Invalid input."
       game_starter
@@ -150,11 +150,11 @@ class Game
 
   def switch_letter(letters, numbers)
     characters = []
-    letters.each_cons(@ai_ship_bucket[0].length) do |group| 
+    letters.each_cons(@ai_ship_bucket[0].length) do |group|
       characters << group
     end
     letter_array = characters.sample
-    number = numbers.sample 
+    number = numbers.sample
     coords = letter_array.map do |letter|
       letter + number.to_s
     end
@@ -166,11 +166,11 @@ class Game
 
   def switch_number(letters, numbers)
     characters = []
-    numbers.each_cons(@ai_ship_bucket[0].length) do |group| 
+    numbers.each_cons(@ai_ship_bucket[0].length) do |group|
       characters << group
     end
     number_array  = characters.sample
-    letter = letters.sample 
+    letter = letters.sample
     coords = number_array.map do |number|
       letter + number.to_s
     end
@@ -228,5 +228,4 @@ class Game
       puts "My shot on #{@ai_player.last_shot.coordinate} was a miss."
     end
   end
-
 end
